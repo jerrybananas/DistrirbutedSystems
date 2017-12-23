@@ -8,7 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,6 +24,9 @@ public class MainController {
 	// inject the customer dao
 	@Autowired
 	private EmployeeDAO employeeDAO;
+	
+	
+	private EmployeeService employeeService;
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public ModelAndView getAdmissionForm() {
@@ -70,27 +72,31 @@ public class MainController {
 		return model;
 	}
 
-	/*@GetMapping("list") public String listEmployees(Model model) {
-	  
-	  // get customers from dao 
+	@GetMapping("list")
+	public String listEmployees(Model model) {
+
+		// get customers from dao
 		List<Employee> employees = employeeDAO.getEmployees();
-	  
-	  // add the customers to the model 
-	model.addAttribute("employees", employees);
-	  
-	  System.out.println(employees);
-	  
-	  return "list-employees"; }
-*/
+
+		// add the customers to the model
+		model.addAttribute("employees", employees);
+
+		System.out.println(employees);
+
+		return "list-employees";
+	}
+
 	// ADMIN~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ADMIN/NEW
 
-	@RequestMapping(value = "/admin/newuser", method = RequestMethod.GET) public
-	  ModelAndView adminNew() {
-	  
-	  ModelAndView model = new ModelAndView("adminnew"); return model; }
+	@RequestMapping(value = "/admin/newuser", method = RequestMethod.GET)
+	public ModelAndView adminNew() {
 
-	@RequestMapping(value = "/newemp", method = RequestMethod.POST)
+		ModelAndView model = new ModelAndView("adminnew");
+		return model;
+	}
+
+	/*@RequestMapping(value = "/newemp", method = RequestMethod.POST)
 	public ModelAndView submitAdminNew(@RequestParam Map<String, String> reqPar) {
 
 		String id = reqPar.get("exampleInputID");
@@ -105,14 +111,23 @@ public class MainController {
 		ModelAndView model = new ModelAndView("adminnew");
 		return model;
 	}
+	*/
+	@RequestMapping(value = "/newemp", method = RequestMethod.POST)
+	public String submitAdminNew(@ModelAttribute("newEmployee") Employee employee) {
+		
+		employeeService.saveEmployee(employee);
+		
 
-	/*@PostMapping("/newemp") public String
-	  saveEmployee(@ModelAttribute("employee") Employee employee) { 
-		// save the customer using the service 
-		//employeeService.saveEmployee(employee);
-	  
-	  return "redirect:/list"; }
-*/
+		return "redirect:/list";
+	}
+
+	/*
+	 * @PostMapping("/newemp") public String
+	 * saveEmployee(@ModelAttribute("employee") Employee employee) { // save the
+	 * customer using the service //employeeService.saveEmployee(employee);
+	 * 
+	 * return "redirect:/list"; }
+	 */
 	// ADMIN/EXISTING
 
 	@RequestMapping(value = "/admin/existinguser", method = RequestMethod.GET)

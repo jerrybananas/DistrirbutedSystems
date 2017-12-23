@@ -34,6 +34,45 @@ public class EmployeeDAOImpl implements EmployeeDAO {
                 //return the results
                 return employees;
         }
+        
+        
+        
+        @Override
+    	public void saveEmployee(Employee employee) {
+    		// get current hibernate session
+    		Session currentSession = sessionFactory.getCurrentSession();
+    		
+    		// save the customer
+    		currentSession.save(employee);
+    		
+    	}
+
+    	@Override
+    	public Employee getEmployee(int id) {
+    		// get current hibernate session
+    		Session currentSession = sessionFactory.getCurrentSession();
+    		
+    		//get and return Customer
+    		Employee employee = currentSession.get(Employee.class, id);
+    		return employee;
+    	}
+
+    	@Override
+    	public void deleteEmployee(int id) {
+    		
+    		// get current hibernate session
+    		Session currentSession = sessionFactory.getCurrentSession();
+    		
+    		// find the customer
+    		Employee employee = currentSession.get(Employee.class, id);
+
+    		
+    		// delete customer
+    		currentSession.delete(employee);
+    	}
+        
+        
+        
 
 }
 

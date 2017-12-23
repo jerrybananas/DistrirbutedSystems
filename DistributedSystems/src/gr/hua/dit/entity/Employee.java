@@ -36,7 +36,7 @@ public class Employee implements Serializable {
 	@Column(name = "Role")
 	private String role;
 
-	@Column(name = "Sumbit")
+	@Column(name = "Submit")
 	private Boolean sumbit;
 
 	@Column(name = "Calculate")

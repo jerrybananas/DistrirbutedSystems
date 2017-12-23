@@ -2,7 +2,6 @@ package gr.hua.dit.service;
 
 import java.util.List;
 
-import gr.hua.dit.entity.Customer;
 import gr.hua.dit.entity.Employee;
 
 public interface EmployeeService {
