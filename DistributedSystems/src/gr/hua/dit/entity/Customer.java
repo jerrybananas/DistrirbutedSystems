@@ -29,7 +29,7 @@ public class Customer implements Serializable {
 	@Column(name = "CID")
 	private int cid;
 
-	@Column(name = "came")
+	@Column(name = "name")
 	private String cname;
 
 	@Column(name = "AFM")

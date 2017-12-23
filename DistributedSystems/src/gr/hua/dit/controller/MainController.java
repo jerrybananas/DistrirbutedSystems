@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import gr.hua.dit.dao.CustomerDAO;
 import gr.hua.dit.dao.EmployeeDAO;
+import gr.hua.dit.entity.Customer;
 import gr.hua.dit.entity.Employee;
 import gr.hua.dit.service.EmployeeService;
 
@@ -24,8 +26,7 @@ public class MainController {
 	// inject the customer dao
 	@Autowired
 	private EmployeeDAO employeeDAO;
-	
-	
+
 	private EmployeeService employeeService;
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
@@ -53,7 +54,6 @@ public class MainController {
 				}
 			}
 		}
-		System.out.println(employees.get(6).getName());
 		ModelAndView model = new ModelAndView("retry");
 
 		if (role.equals("admin")) {
@@ -86,6 +86,73 @@ public class MainController {
 		return "list-employees";
 	}
 
+	// EMPLOYEE~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	@Autowired
+	private CustomerDAO customerDAO;
+
+	@RequestMapping(value = "/calculate", method = RequestMethod.POST)
+	public ModelAndView calculateForm(@RequestParam Map<String, String> reqPar) {
+
+		String afm = reqPar.get("afm");
+		int j = -1;
+		List<Customer> customers = customerDAO.getCustomers();
+
+		int searchListLength = customers.size();
+		for (int i = 0; i < searchListLength; i++) {
+			if (customers.get(i).getCafm().equals(afm)) {
+				j = i;
+				break;
+			}
+		}
+		System.out.println(customers.get(j).getCid());
+		ModelAndView model = new ModelAndView("retryEmployee");
+
+		int money = -1;
+		if (j != -1) {
+			if (customers.get(j).getYear() <= 5) {
+				if (customers.get(j).getCondition().equals("bad")) {
+					money = 400;
+				} else if (customers.get(j).getCondition().equals("medium")) {
+					money = 640;
+				} else if (customers.get(j).getCondition().equals("good")) {
+					money = 800;
+				}
+			} else if (customers.get(j).getYear() <= 10 || customers.get(j).getYear() > 5) {
+				if (customers.get(j).getCondition().equals("bad")) {
+					money = 500;
+				} else if (customers.get(j).getCondition().equals("medium")) {
+					money = 800;
+				} else if (customers.get(j).getCondition().equals("good")) {
+					money = 1000;
+				}
+			} else if (customers.get(j).getYear() <= 20 || customers.get(j).getYear() > 10) {
+				if (customers.get(j).getCondition().equals("bad")) {
+					money = 600;
+				} else if (customers.get(j).getCondition().equals("medium")) {
+					money = 960;
+				} else if (customers.get(j).getCondition().equals("good")) {
+					money = 1200;
+				}
+			} else if (customers.get(j).getYear() > 20) {
+				if (customers.get(j).getCondition().equals("bad")) {
+					money = 500;
+				} else if (customers.get(j).getCondition().equals("medium")) {
+					money = 800;
+				} else if (customers.get(j).getCondition().equals("good")) {
+					money = 1000;
+				}
+			}
+
+			model = new ModelAndView("result");
+
+		}
+		if (money != -1) {
+			model.addObject(money);
+		}
+		return model;
+
+	}
+
 	// ADMIN~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// ADMIN/NEW
 
@@ -96,27 +163,25 @@ public class MainController {
 		return model;
 	}
 
-	/*@RequestMapping(value = "/newemp", method = RequestMethod.POST)
-	public ModelAndView submitAdminNew(@RequestParam Map<String, String> reqPar) {
-
-		String id = reqPar.get("exampleInputID");
-		String name = reqPar.get("exampleInputName");
-		String submit = reqPar.get("exampleInputSubmit");
-		String calculate = reqPar.get("exampleInputCalculate");
-		String password = reqPar.get("exampleInputPassword");
-		String role = reqPar.get("exampleInputRole");
-
-		System.out.println(id + " " + name + " " + submit + " " + calculate);
-
-		ModelAndView model = new ModelAndView("adminnew");
-		return model;
-	}
-	*/
+	/*
+	 * @RequestMapping(value = "/newemp", method = RequestMethod.POST) public
+	 * ModelAndView submitAdminNew(@RequestParam Map<String, String> reqPar) {
+	 * 
+	 * String id = reqPar.get("exampleInputID"); String name =
+	 * reqPar.get("exampleInputName"); String submit =
+	 * reqPar.get("exampleInputSubmit"); String calculate =
+	 * reqPar.get("exampleInputCalculate"); String password =
+	 * reqPar.get("exampleInputPassword"); String role =
+	 * reqPar.get("exampleInputRole");
+	 * 
+	 * System.out.println(id + " " + name + " " + submit + " " + calculate);
+	 * 
+	 * ModelAndView model = new ModelAndView("adminnew"); return model; }
+	 */
 	@RequestMapping(value = "/newemp", method = RequestMethod.POST)
 	public String submitAdminNew(@ModelAttribute("newEmployee") Employee employee) {
-		
+
 		employeeService.saveEmployee(employee);
-		
 
 		return "redirect:/list";
 	}
